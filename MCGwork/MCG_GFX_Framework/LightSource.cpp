@@ -62,13 +62,10 @@ glm::vec3 LightSource::getLightColour()
 	return lightColour;
 }
 
-void LightSource::setSurfaceLight(glm::vec3 _surfaceLight)
-{
-	surfaceLight = _surfaceLight;
-}
 
-glm::vec3 LightSource::getSurfaceLight()
+glm::vec3 LightSource::getSurfaceLight(Sphere sphere)
 {
+	surfaceLight = sphere.getSphereColour();
 	return surfaceLight;
 }
 

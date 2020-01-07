@@ -1,6 +1,7 @@
 #include "Sphere.h"
 #include "Ray.h"
 #include "Camera.h"
+#include "LightSource.h"
 #include <iostream>
 
 
@@ -76,3 +77,15 @@ glm::vec3 Sphere::getSpherenormal()
 {
   return sphereNormal;
 }
+
+void Sphere::setSphereColour(glm::vec3 _sphereColour)
+{
+	sphereColour = _sphereColour;
+	
+}
+
+glm::vec3 Sphere::getSphereColour()
+{
+	return sphereColour;
+}
+

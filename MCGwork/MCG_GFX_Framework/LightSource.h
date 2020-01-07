@@ -23,13 +23,12 @@ public:
 
 	void setLightpos(glm::vec3 _setLightpos);
 	void setLightColour(glm::vec3 _lightColour);
-	void setSurfaceLight(glm::vec3 _surfaceLight);
 	void setAmbientLight(glm::vec3 _ambientLight);
 	void setObjectShininess(float _shineness);
 	glm::vec3 Diffuselight(Sphere sphere, intersectResult tmpResult);
 	glm::vec3 getSpecularLight(Ray _ray, Sphere sphere, intersectResult tmpResult);
 	glm::vec3 getLightpos();
 	glm::vec3 getLightColour();
-	glm::vec3 getSurfaceLight();
+	glm::vec3 getSurfaceLight(Sphere sphere);
 	glm::vec3 getAmbientLight();
 };

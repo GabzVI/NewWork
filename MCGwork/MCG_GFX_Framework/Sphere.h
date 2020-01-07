@@ -2,6 +2,7 @@
 
 class Ray;
 class Camera;
+class LightSource;
 
 struct intersectResult
 {
@@ -18,8 +19,9 @@ private:
   float radius; //radius of sphere
   glm::vec3 sphereOri; //Sphere Origin
   glm::vec3 sphereNormal;
+  glm::vec3 sphereColour;
   float distfromCameratoSphere;
-	
+  
 public:
 
   intersectResult Rayintersection(Ray _ray, Camera camera);
@@ -29,6 +31,8 @@ public:
   glm::vec3 getSphereori();
   glm::vec3 getSpherenormal();
   float getSphereDistFromCamera(intersectResult rtn, Camera camera);
+  void setSphereColour(glm::vec3 sphereColour);
+  glm::vec3 getSphereColour();
 	
 
 };
