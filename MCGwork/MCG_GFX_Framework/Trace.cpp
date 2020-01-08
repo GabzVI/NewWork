@@ -6,11 +6,13 @@
 #include <iostream>
 #include <cmath>
 
-glm::vec3 Traceray::Raytracer(Ray _ray, intersectResult &tmpResult, LightSource lightpoint, Camera camera)
+glm::vec3 Traceray::Raytracer(Ray _ray, intersectResult &tmpResult, LightSource lightpoint, Camera camera, int count)
 {
-	
+	glm::vec3 reflectColour;
+	glm::vec3 reflectRayDirection;
 	float temp = 0;
 	Sphere chosenSphere;
+	Ray reflectedRay;
 	int chosenSphereElement;
 	bool hit = false;
 	
@@ -27,13 +29,24 @@ glm::vec3 Traceray::Raytracer(Ray _ray, intersectResult &tmpResult, LightSource 
 		} 
 	}
 	
+	
 	if (hit == true)
-	{
+		{
+			if (count > 0)
+			{
 
-		pixelColour = lightpoint.Diffuselight(spheres.at(chosenSphereElement), tmpResult) + lightpoint.getAmbientLight()  + lightpoint.getSpecularLight(_ray , spheres.at(chosenSphereElement), tmpResult); // Diffuse + Ambient + specular light
-		pixelColour = glm::clamp(pixelColour * lightpoint.getSurfaceLight(spheres.at(chosenSphereElement)) * lightpoint.getLightColour(), glm::vec3(0), glm::vec3(1));
+				reflectRayDirection = _ray.direction - (2.0f * glm::dot(_ray.direction, chosenSphere.getSpherenormal()) * chosenSphere.getSpherenormal());
 
-	}
+				reflectedRay.direction = glm::normalize(reflectRayDirection);
+				reflectedRay.origin = chosenSphere.getSphereIntersection(tmpResult) + chosenSphere.getSpherenormal() * 0.01f;
+
+				reflectColour = Raytracer(reflectedRay, tmpResult, lightpoint, camera, count - 1);
+
+
+			}
+			pixelColour = lightpoint.Diffuselight(chosenSphere, tmpResult) + lightpoint.getAmbientLight() + lightpoint.getSpecularLight(_ray, chosenSphere, tmpResult); // Diffuse + Ambient + specular light
+			pixelColour = glm::clamp(pixelColour * lightpoint.getSurfaceLight(chosenSphere) * lightpoint.getLightColour(), glm::vec3(0), glm::vec3(1));
+    }
 	else
 	{
 		pixelColour = glm::vec3(0.2, 0.2, 0.2);
@@ -41,8 +54,8 @@ glm::vec3 Traceray::Raytracer(Ray _ray, intersectResult &tmpResult, LightSource 
 	}
 
 
-
 	return pixelColour;
+;
 }
 
 void Traceray::SetSpheres(Sphere _spheres)

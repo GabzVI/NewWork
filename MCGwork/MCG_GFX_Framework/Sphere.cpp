@@ -89,3 +89,12 @@ glm::vec3 Sphere::getSphereColour()
 	return sphereColour;
 }
 
+glm::vec3 Sphere::getSphereIntersection(intersectResult rtn)
+{
+	return rtn.sphereintersection;
+}
+
+float Sphere::getSpherePointDistance(intersectResult rtn)
+{
+	return rtn.pointdistance;
+}

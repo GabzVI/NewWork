@@ -12,7 +12,7 @@
 
 std::mutex mutex;
 
-void thread1(int id, Traceray traceray, Camera camera, LightSource lightpoint, float startingPoint, float range, int x, int y)
+void thread1(int id, Traceray traceray, Camera camera, LightSource lightpoint, float startingPoint, float range, int x)
 {
 
 
@@ -30,7 +30,7 @@ void thread1(int id, Traceray traceray, Camera camera, LightSource lightpoint, f
 			intersectResult tmpResult;
 
 
-			pixelColour = traceray.Raytracer(raycreated, tmpResult, lightpoint, camera);
+			pixelColour = traceray.Raytracer(raycreated, tmpResult, lightpoint, camera, 1);
 
 			pixelColour = pixelColour * 255.0f;
 
@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
 		LightSource lightpoint;
 		
 
-        #define NUM_THREADS 20//Change the number to whatever amount of threads you want to have
+        #define NUM_THREADS 5//Change the number to whatever amount of threads you want to have
 		std::thread threads[NUM_THREADS];
 
 		lightpoint.setLightpos(glm::vec3(-10.0f, -10.0f, 5.0f));
@@ -132,15 +132,15 @@ int main(int argc, char *argv[])
 		lightpoint.setObjectShininess(10.0f);
 
 
-		sphere[0].SetRadius(0.5f);
+		sphere[0].SetRadius(1.0f);
 		sphere[0].setSphereColour(glm::vec3(0.0f, 1.0f, 1.0f));
-		sphere[0].SetSphereori(glm::vec3(1.25f, 0.0f, -6.0f));
+		sphere[0].SetSphereori(glm::vec3(-1.0f, 0.0f, -10.0f));
 
-		sphere[1].SetRadius(0.5f);
+		sphere[1].SetRadius(1.0f);
 		sphere[1].setSphereColour(glm::vec3(1.0f, 0.0f, 0.0f));
 		sphere[1].SetSphereori(glm::vec3(1.0f, 0.0f, -10.0f));
 
-		sphere[2].SetRadius(0.5f);
+		/*sphere[2].SetRadius(0.5f);
 		sphere[2].setSphereColour(glm::vec3(1.0f, 0.0f, 1.0f));
 		sphere[2].SetSphereori(glm::vec3(-1.0f, 0.0f, -15.0f));
 		
@@ -155,10 +155,10 @@ int main(int argc, char *argv[])
 		sphere[5].SetRadius(0.5f);
 		sphere[5].setSphereColour(glm::vec3(1.0f, 0.0f, 1.0f));
 		sphere[5].SetSphereori(glm::vec3(-2.0f, 0.0f, -3.0f));
-
-		sphere[6].SetRadius(1.5f);
-		sphere[6].setSphereColour(glm::vec3(1.0f, 1.0f, 0.0f));
-		sphere[6].SetSphereori(glm::vec3(0.0f, 0.0f, -5.0f));
+*/
+		//sphere[6].SetRadius(1.5f);
+		//sphere[6].setSphereColour(glm::vec3(1.0f, 1.0f, 0.0f));
+		//sphere[6].SetSphereori(glm::vec3(0.0f, 0.0f, -5.0f));
 
 
 		for (int i = 0; i < (sizeof(sphere) / sizeof(*sphere)); i++)
@@ -180,7 +180,7 @@ int main(int argc, char *argv[])
 		for (int k = 0; k < numOfthreads; k++)
 		{
 			
-			threads[k] = std::thread(&thread1, id, traceray, camera, lightpoint, startingPoint, range, x, y);
+			threads[k] = std::thread(&thread1, id, traceray, camera, lightpoint, startingPoint, range, x);
 
 
 			startingPoint = startingPoint + range;

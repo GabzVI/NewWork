@@ -1,7 +1,14 @@
-﻿  Camera.cpp
+﻿  LightSource.cpp
+  Main.cpp
+\\bournemouth.ac.uk\data\student\home\scitech\s5006074\mcgwork\newwork\mcgwork\mcg_gfx_framework\main.cpp(19): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+  MCG_GFX_Lib.cpp
+  Camera.cpp
+  Sphere.cpp
+  Trace.cpp
+\\bournemouth.ac.uk\data\student\home\scitech\s5006074\mcgwork\newwork\mcgwork\mcg_gfx_framework\trace.cpp(19): warning C4018: '<': signed/unsigned mismatch
   Generating code
-  1 of 98 functions ( 1.0%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
+  352 of 352 functions (100.0%) were compiled.
+    260 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
-  MCG_GFX_Framework.vcxproj -> C:\Users\Gabz\Documents\raytracer\MCGwork\Release\MCG_GFX_Framework.exe
+  MCG_GFX_Framework.vcxproj -> \\bournemouth.ac.uk\data\Student\Home\SciTech\s5006074\MCGwork\NewWork\MCGwork\Release\MCG_GFX_Framework.exe

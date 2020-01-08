@@ -33,6 +33,7 @@ public:
   float getSphereDistFromCamera(intersectResult rtn, Camera camera);
   void setSphereColour(glm::vec3 sphereColour);
   glm::vec3 getSphereColour();
-	
+  glm::vec3 getSphereIntersection(intersectResult rtn);
+  float getSpherePointDistance(intersectResult rtn);
 
 };
