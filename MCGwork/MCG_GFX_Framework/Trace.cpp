@@ -32,20 +32,30 @@ glm::vec3 Traceray::Raytracer(Ray _ray, intersectResult &tmpResult, LightSource 
 	
 	if (hit == true)
 		{
+
+		
 			if (count > 0)
 			{
+				
+				Raytracer(reflectedRay, tmpResult, lightpoint, camera, count - 1);
+
 
 				reflectRayDirection = _ray.direction - (2.0f * glm::dot(_ray.direction, chosenSphere.getSpherenormal()) * chosenSphere.getSpherenormal());
 
 				reflectedRay.direction = glm::normalize(reflectRayDirection);
-				reflectedRay.origin = chosenSphere.getSphereIntersection(tmpResult) + chosenSphere.getSpherenormal() * 0.01f;
+				reflectedRay.origin =  chosenSphere.getSpherenormal();
 
-				reflectColour = Raytracer(reflectedRay, tmpResult, lightpoint, camera, count - 1);
+			    
+				reflectColour = reflectRayDirection;
 
+			   
 
+				
 			}
+
 			pixelColour = lightpoint.Diffuselight(chosenSphere, tmpResult) + lightpoint.getAmbientLight() + lightpoint.getSpecularLight(_ray, chosenSphere, tmpResult); // Diffuse + Ambient + specular light
-			pixelColour = glm::clamp(pixelColour * lightpoint.getSurfaceLight(chosenSphere) * lightpoint.getLightColour(), glm::vec3(0), glm::vec3(1));
+			pixelColour = glm::clamp(pixelColour  * lightpoint.getSurfaceLight(chosenSphere) * lightpoint.getLightColour(), glm::vec3(0), glm::vec3(1));
+			
     }
 	else
 	{

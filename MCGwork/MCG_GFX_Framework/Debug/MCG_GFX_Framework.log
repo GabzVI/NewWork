@@ -1,3 +1,11 @@
-﻿  Main.cpp
+﻿  Camera.cpp
+  LightSource.cpp
+  MCG_GFX_Lib.cpp
+  Main.cpp
 \\bournemouth.ac.uk\data\student\home\scitech\s5006074\mcgwork\newwork\mcgwork\mcg_gfx_framework\main.cpp(19): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+  Sphere.cpp
+  Trace.cpp
+\\bournemouth.ac.uk\data\student\home\scitech\s5006074\mcgwork\newwork\mcgwork\mcg_gfx_framework\trace.cpp(19): warning C4018: '<': signed/unsigned mismatch
+  Generating Code...
+  LINK : \\bournemouth.ac.uk\data\Student\Home\SciTech\s5006074\MCGwork\NewWork\MCGwork\Debug\MCG_GFX_Framework.exe not found or not built by the last incremental link; performing full link
   MCG_GFX_Framework.vcxproj -> \\bournemouth.ac.uk\data\Student\Home\SciTech\s5006074\MCGwork\NewWork\MCGwork\Debug\MCG_GFX_Framework.exe

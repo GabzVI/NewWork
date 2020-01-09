@@ -3,6 +3,8 @@
 #include <thread>
 #include <chrono>
 #include <mutex>
+#include <random>
+#include <time.h>
 #include "Camera.h"
 #include "Ray.h"
 #include "Trace.h"
@@ -30,7 +32,7 @@ void thread1(int id, Traceray traceray, Camera camera, LightSource lightpoint, f
 			intersectResult tmpResult;
 
 
-			pixelColour = traceray.Raytracer(raycreated, tmpResult, lightpoint, camera, 1);
+			pixelColour = traceray.Raytracer(raycreated, tmpResult, lightpoint, camera, 0);
 
 			pixelColour = pixelColour * 255.0f;
 
@@ -105,7 +107,7 @@ int main(int argc, char *argv[])
 
 	// Variable to keep track of time
 	float timer = 0.0f;
-
+	bool run = true;
 	// This is our game loop
 	// It will run until the user presses 'escape' or closes the window
 	while (MCG::ProcessFrame())
@@ -119,11 +121,12 @@ int main(int argc, char *argv[])
 			//timer += 1.0f / 60.0f;
 		Camera camera;
 		Traceray traceray;
-		Sphere sphere[7];
+		Sphere sphere[200];
 		LightSource lightpoint;
 		
 
-        #define NUM_THREADS 5//Change the number to whatever amount of threads you want to have
+        #define NUM_THREADS 5
+	    //Change the number to whatever amount of threads you want to have
 		std::thread threads[NUM_THREADS];
 
 		lightpoint.setLightpos(glm::vec3(-10.0f, -10.0f, 5.0f));
@@ -132,13 +135,13 @@ int main(int argc, char *argv[])
 		lightpoint.setObjectShininess(10.0f);
 
 
-		sphere[0].SetRadius(1.0f);
+		/*sphere[0].SetRadius(1.0f);
 		sphere[0].setSphereColour(glm::vec3(0.0f, 1.0f, 1.0f));
 		sphere[0].SetSphereori(glm::vec3(-1.0f, 0.0f, -10.0f));
 
 		sphere[1].SetRadius(1.0f);
 		sphere[1].setSphereColour(glm::vec3(1.0f, 0.0f, 0.0f));
-		sphere[1].SetSphereori(glm::vec3(1.0f, 0.0f, -10.0f));
+		sphere[1].SetSphereori(glm::vec3(1.0f, 0.0f, -10.0f));*/
 
 		/*sphere[2].SetRadius(0.5f);
 		sphere[2].setSphereColour(glm::vec3(1.0f, 0.0f, 1.0f));
@@ -154,17 +157,39 @@ int main(int argc, char *argv[])
 		
 		sphere[5].SetRadius(0.5f);
 		sphere[5].setSphereColour(glm::vec3(1.0f, 0.0f, 1.0f));
-		sphere[5].SetSphereori(glm::vec3(-2.0f, 0.0f, -3.0f));
-*/
-		//sphere[6].SetRadius(1.5f);
+		sphere[5].SetSphereori(glm::vec3(-2.0f, 0.0f, -3.0f));*/
+
+	    //sphere[6].SetRadius(1.5f);
 		//sphere[6].setSphereColour(glm::vec3(1.0f, 1.0f, 0.0f));
 		//sphere[6].SetSphereori(glm::vec3(0.0f, 0.0f, -5.0f));
 
+		std::random_device rseed;
+		std::mt19937 rng(rseed());
 
 		for (int i = 0; i < (sizeof(sphere) / sizeof(*sphere)); i++)
 		{
+			
+			std::uniform_real_distribution<float> distX(0, 500);
+			std::uniform_real_distribution<float> distY(0, 480);
+			std::uniform_real_distribution<float> distZ(0, -10); // rand instead for the rest
+
+
+			std::uniform_real_distribution<float> distZ(0.0f, 1.0f); // use this one for color
+
+			glm::vec3 randPos;
+			randPos.x = distX(rng);
+			randPos.y = distY(rng);
+			randPos.z = distZ(rng);
+			sphere[i].SetRadius(20.0f);
+
+			glm::vec3 color;
+			sphere[i].setSphereColour(glm::vec3(1.0f, 0.0f, 10.0f));
+			sphere[i].SetSphereori(randPos);
+
 			traceray.SetSpheres(sphere[i]);
 		}
+		
+		
 
 		camera.setWindowsize(glm::ivec2(x, y));
 		camera.setCampos(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -177,23 +202,31 @@ int main(int argc, char *argv[])
 
 		auto start = std::chrono::high_resolution_clock::now();
 		// for loop that goes through each thread
-		for (int k = 0; k < numOfthreads; k++)
+		while (run)
 		{
-			
-			threads[k] = std::thread(&thread1, id, traceray, camera, lightpoint, startingPoint, range, x);
+			for (int k = 0; k < numOfthreads; k++)
+			{
+
+				threads[k] = std::thread(&thread1, id, traceray, camera, lightpoint, startingPoint, range, x);
 
 
-			startingPoint = startingPoint + range;
+				startingPoint = startingPoint + range;
 
-			//std::cout << " startingPoint = " << startingPoint << std::endl;   
-
+				//std::cout << " startingPoint = " << startingPoint << std::endl;   
+			}
+			run = false;
 		}
+
 
 		for (int l = 0; l < numOfthreads; l++)
 		{
-			threads[l].join();
+			if (threads[l].joinable())
+			{
+				threads[l].join();
+			}
+			
 		}
-
+		
 		auto stop = std::chrono::high_resolution_clock::now();
 		std::chrono::duration<double>elapsed = stop - start;
 		std::cout << "Time taken: " << elapsed.count() << "s\n";
