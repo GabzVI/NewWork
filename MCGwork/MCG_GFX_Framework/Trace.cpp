@@ -6,16 +6,19 @@
 #include <iostream>
 #include <cmath>
 
-glm::vec3 Traceray::Raytracer(Ray _ray, intersectResult &tmpResult, LightSource lightpoint, Camera camera, int count)
+glm::vec3 Traceray::Raytracer(Ray _ray, LightSource lightpoint, Camera camera, int count)
 {
 	glm::vec3 reflectColour;
+	glm::vec3 refractedColour;
 	glm::vec3 reflectRayDirection;
 	float temp = 0;
 	Sphere chosenSphere;
+	intersectResult tmpResult;
 	Ray reflectedRay;
 	int chosenSphereElement;
 	bool hit = false;
 	
+	//Draws the closest sphere to screen by comparing the distance between camera and sphere origin of each sphere.
 	for (int i = 0; i < spheres.size(); i++)
 	{		
 		tmpResult = spheres[i].Rayintersection(_ray, camera);
@@ -36,23 +39,26 @@ glm::vec3 Traceray::Raytracer(Ray _ray, intersectResult &tmpResult, LightSource 
 		
 			if (count > 0)
 			{
-				
-				Raytracer(reflectedRay, tmpResult, lightpoint, camera, count - 1);
 
-
-				reflectRayDirection = _ray.direction - (2.0f * glm::dot(_ray.direction, chosenSphere.getSpherenormal()) * chosenSphere.getSpherenormal());
+				reflectRayDirection = glm::reflect(_ray.direction, chosenSphere.getSpherenormal());
 
 				reflectedRay.direction = glm::normalize(reflectRayDirection);
-				reflectedRay.origin =  chosenSphere.getSpherenormal();
+				reflectedRay.origin = tmpResult.sphereintersection + reflectedRay.direction * 0.1f;
 
-			    
-				reflectColour = reflectRayDirection;
+			
 
-			   
+				//Refraction
+				float c1 = -glm::dot(chosenSphere.getSpherenormal(), reflectedRay.direction);
+				float n2 = sin(glm::angle(reflectedRay.direction, chosenSphere.getSpherenormal()));
+				float n1 = 1.0f;
+				float totalN = n2/ n1; // n2  / n1 or n1 / n2?
+				float c2 = sqrt(1.0f - pow(totalN, 2) * (1.0f - pow(c1, 2)));
+				refractedColour = (totalN * reflectedRay.direction) + (totalN * c1 - c2) * chosenSphere.getSpherenormal();
 
-				
+				reflectColour = Traceray::Raytracer(reflectedRay, lightpoint, camera, --count);
 			}
 
+			//Adding all lighting together
 			pixelColour = lightpoint.Diffuselight(chosenSphere, tmpResult) + lightpoint.getAmbientLight() + lightpoint.getSpecularLight(_ray, chosenSphere, tmpResult); // Diffuse + Ambient + specular light
 			pixelColour = glm::clamp(pixelColour  * lightpoint.getSurfaceLight(chosenSphere) * lightpoint.getLightColour(), glm::vec3(0), glm::vec3(1));
 			
@@ -64,7 +70,7 @@ glm::vec3 Traceray::Raytracer(Ray _ray, intersectResult &tmpResult, LightSource 
 	}
 
 
-	return pixelColour;
+	return pixelColour + reflectColour;
 ;
 }
 

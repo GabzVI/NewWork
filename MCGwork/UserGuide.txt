@@ -1,0 +1,5 @@
+Step 1: 
+theres a #define thread nums which you can change to whatever amount you desire of threads.
+Step 2: You can change the number count of reflection rays to activate the reflection
+if statement to make it work.
+Step 3: Press the local windows debugger to run the program.

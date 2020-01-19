@@ -4,6 +4,8 @@
 #include <chrono>
 #include <mutex>
 #include <random>
+#include <cstdlib>
+#include <ctime>
 #include <time.h>
 #include "Camera.h"
 #include "Ray.h"
@@ -31,10 +33,10 @@ void thread1(int id, Traceray traceray, Camera camera, LightSource lightpoint, f
 			Ray raycreated = camera.Returnray(pixelPosition);//stores the returnray inside raycreated
 			intersectResult tmpResult;
 
+			//Change 0 to 1-5, sets number of time ray is reflected.
+			pixelColour = traceray.Raytracer(raycreated, lightpoint, camera, 10);
 
-			pixelColour = traceray.Raytracer(raycreated, tmpResult, lightpoint, camera, 0);
-
-			pixelColour = pixelColour * 255.0f;
+			pixelColour = glm::clamp(pixelColour, glm::vec3(0.0f), glm::vec3(1.0f)) * 255.0f;
 
 
 			mutex.lock();
@@ -87,119 +89,116 @@ int main(int argc, char *argv[])
 	glm::vec3 pixelColour(0, 255, 0);
 
 
-	// Draws a single pixel at the specified coordinates in the specified colour!
-	//MCG::DrawPixel( pixelPosition, pixelColour );
-
-	// Do any other DrawPixel calls here
-	// ...
-
-	// Displays drawing to screen and holds until user closes window
-	// You must call this after all your drawing calls
-	// Program will exit after this line
-	//return MCG::ShowAndHold();
 
 
 
 
-
-	// Advanced access - comment out the above DrawPixel and MCG::ShowAndHold lines, then uncomment the following:
-
-
-	// Variable to keep track of time
+	
 	float timer = 0.0f;
 	bool run = true;
+
 	// This is our game loop
 	// It will run until the user presses 'escape' or closes the window
 	while (MCG::ProcessFrame())
 	{
-		// Set every pixel to the same colour
-		//	MCG::SetBackground( glm::ivec3( 0, 0, 0 ) );
+	
 
-			// Change our pixel's X coordinate according to time
-			//pixelPosition.x = (windowSize.x / 2) + (int)(sin(timer) * 100.0f);
-			// Update our time variable
-			//timer += 1.0f / 60.0f;
+
 		Camera camera;
 		Traceray traceray;
-		Sphere sphere[200];
+		Sphere sphere[2];
 		LightSource lightpoint;
 		
-
-        #define NUM_THREADS 5
-	    //Change the number to whatever amount of threads you want to have
+		//Change the number to whatever amount of threads you want to have
+    #define NUM_THREADS 5
 		std::thread threads[NUM_THREADS];
 
-		lightpoint.setLightpos(glm::vec3(-10.0f, -10.0f, 5.0f));
+		lightpoint.setLightpos(glm::vec3(0.0f, -10.0f, 5.0f));
 		lightpoint.setLightColour(glm::vec3(1.0f, 1.0f, 1.0f));
 		lightpoint.setAmbientLight(glm::vec3(0.1f));
 		lightpoint.setObjectShininess(10.0f);
 
-
-		/*sphere[0].SetRadius(1.0f);
-		sphere[0].setSphereColour(glm::vec3(0.0f, 1.0f, 1.0f));
-		sphere[0].SetSphereori(glm::vec3(-1.0f, 0.0f, -10.0f));
-
-		sphere[1].SetRadius(1.0f);
-		sphere[1].setSphereColour(glm::vec3(1.0f, 0.0f, 0.0f));
-		sphere[1].SetSphereori(glm::vec3(1.0f, 0.0f, -10.0f));*/
-
-		/*sphere[2].SetRadius(0.5f);
-		sphere[2].setSphereColour(glm::vec3(1.0f, 0.0f, 1.0f));
-		sphere[2].SetSphereori(glm::vec3(-1.0f, 0.0f, -15.0f));
-		
-		sphere[3].SetRadius(1.0f);
-		sphere[3].setSphereColour(glm::vec3(0.0f, 0.5f, 1.0f));
-		sphere[3].SetSphereori(glm::vec3(0.0f, 0.0f, -16.0f));
-		
-		sphere[4].SetRadius(0.35f);
-		sphere[4].setSphereColour(glm::vec3(1.0f, 0.5f, 0.0f));
-		sphere[4].SetSphereori(glm::vec3(-1.75f, 0.0f, -14.0f));
-		
-		sphere[5].SetRadius(0.5f);
-		sphere[5].setSphereColour(glm::vec3(1.0f, 0.0f, 1.0f));
-		sphere[5].SetSphereori(glm::vec3(-2.0f, 0.0f, -3.0f));*/
-
-	    //sphere[6].SetRadius(1.5f);
-		//sphere[6].setSphereColour(glm::vec3(1.0f, 1.0f, 0.0f));
-		//sphere[6].SetSphereori(glm::vec3(0.0f, 0.0f, -5.0f));
-
 		std::random_device rseed;
 		std::mt19937 rng(rseed());
+		
+		std::uniform_real_distribution<float> colourX(0.1, 1);
+		std::uniform_real_distribution<float> colourY(0.1, 1);
+		std::uniform_real_distribution<float> colourZ(0.1, 1);
 
+		glm::vec3 randColour;
+		randColour.x = colourX(rng);
+		randColour.y = colourY(rng);
+		randColour.z = colourZ(rng);
+
+		glm::vec3 randColour1;
+		randColour1.x = colourX(rng);
+		randColour1.y = colourY(rng);
+		randColour1.z = colourZ(rng);
+
+		sphere[0].SetRadius(1.5f);
+		sphere[0].SetSphereori(glm::vec3(1.2f, 1.0f, -10.0f));
+		sphere[0].setSphereColour(glm::vec3(randColour.x, randColour.y, randColour.z));
+		
+		sphere[1].SetRadius(1.5f);
+		sphere[1].SetSphereori(glm::vec3(-2.0f, 0.0f, -10.0f));
+		sphere[1].setSphereColour(glm::vec3(randColour1.x, randColour1.y, randColour1.z));
+		
+		
 		for (int i = 0; i < (sizeof(sphere) / sizeof(*sphere)); i++)
 		{
-			
-			std::uniform_real_distribution<float> distX(0, 500);
-			std::uniform_real_distribution<float> distY(0, 480);
-			std::uniform_real_distribution<float> distZ(0, -10); // rand instead for the rest
-
-
-			std::uniform_real_distribution<float> distZ(0.0f, 1.0f); // use this one for color
-
-			glm::vec3 randPos;
-			randPos.x = distX(rng);
-			randPos.y = distY(rng);
-			randPos.z = distZ(rng);
-			sphere[i].SetRadius(20.0f);
-
-			glm::vec3 color;
-			sphere[i].setSphereColour(glm::vec3(1.0f, 0.0f, 10.0f));
-			sphere[i].SetSphereori(randPos);
-
 			traceray.SetSpheres(sphere[i]);
 		}
 		
 		
+	
 
+		//for (int i = 0; i < (sizeof(sphere) / sizeof(*sphere)); i++)
+		//{
+		//	
+		//	//This sets the positions of sphere randomly
+		//	std::uniform_real_distribution<float> distX(0.0f, 20.0f);
+		//	std::uniform_real_distribution<float> distY(0.0f, 20.0f);
+		//	std::uniform_real_distribution<float> distZ(-5.0f,-50.0f); 
+
+		//	// This randomly chooses colour of spheres
+		//	std::uniform_real_distribution<float> colourX(0.1, 1); 
+		//	std::uniform_real_distribution<float> colourY(0.1, 1);
+		//	std::uniform_real_distribution<float> colourZ(0.1, 1);
+
+		//	//random radius size
+		//	std::uniform_real_distribution<float> radius(1.5f, 2.0f);
+
+		//glm::vec3 randColour;
+		//randColour.x = colourX(rng);
+		//randColour.y = colourY(rng);
+		//randColour.z = colourZ(rng);
+
+		//	glm::vec3 randPos;
+		//	randPos.x = distX(rng);
+		//	randPos.y = distY(rng);
+		//	randPos.z = distZ(rng);
+
+		//	glm::vec3 color;
+		//	sphere[i].SetRadius(radius(rng));
+		//	sphere[i].SetSphereori(randPos);
+		//	sphere[i].setSphereColour(randColour);
+		//	
+
+		//	traceray.SetSpheres(sphere[i]);
+		//}
+		
+	  //Setting Camera
 		camera.setWindowsize(glm::ivec2(x, y));
 		camera.setCampos(glm::vec3(0.0f, 0.0f, 0.0f));
+		//camera.setCampos(glm::vec3(-15.0f, -10.0f, -3.0f));
 
 		float numOfthreads = NUM_THREADS;
 		float startingPoint = 0;
 		float range = y / numOfthreads;
 		int id = 0;
-		
+		int count = 0;
 
+	
 		auto start = std::chrono::high_resolution_clock::now();
 		// for loop that goes through each thread
 		while (run)
@@ -211,27 +210,34 @@ int main(int argc, char *argv[])
 
 
 				startingPoint = startingPoint + range;
-
+				count++;
 				//std::cout << " startingPoint = " << startingPoint << std::endl;   
 			}
+
+			for (int l = 0; l < numOfthreads; l++)
+			{
+				if (threads[l].joinable())
+				{
+					threads[l].join();
+				}
+
+			}
+
 			run = false;
 		}
 
 
-		for (int l = 0; l < numOfthreads; l++)
-		{
-			if (threads[l].joinable())
-			{
-				threads[l].join();
-			}
-			
-		}
 		
+		
+		int key;
 		auto stop = std::chrono::high_resolution_clock::now();
 		std::chrono::duration<double>elapsed = stop - start;
 		std::cout << "Time taken: " << elapsed.count() << "s\n";
-
-		std::cout << "Done drawing Sphere" << std::endl;
+		std::cout << "drew spheres" << std::endl;
+		//Pausing prgram so that  time can be shown.
+		system("pause");
+		
+		
 
 	}
 

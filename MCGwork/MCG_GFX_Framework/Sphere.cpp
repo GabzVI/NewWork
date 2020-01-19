@@ -17,7 +17,7 @@ intersectResult Sphere::Rayintersection(Ray _ray, Camera camera)
 
 	
 
-	if (dist <= radius) 
+	if (dist <= radius || a < 0) 
 	{
 		//std::cout << "ray origin is inside sphere\n";
 		rtn.hit = false;
